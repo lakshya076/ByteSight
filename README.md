@@ -1,35 +1,23 @@
 # ByteSight
 
-Binary-to-Image Classifier. ByteSight aims to read executable binary files and then classify them as recognised malware files by converting to grayscale images and feeding it to a Resnet18 CNN.
+ByteSight is an advanced **Binary-to-Image Malware Classifier**. It visualizes executable binaries as grayscale images and uses a deep ResNet-18 Convolutional Neural Network (CNN) to identify malicious patterns and family signatures.
 
-Built using Pytorch.
+## 🚀 ByteSight v2 (Current Focus)
+The project has transitioned to a professional, high-performance architecture located in the `bytesight_v2/` directory.
 
-Download the dataset into your working directory using
+### Key Improvements in v2:
+*   **Hierarchical Pipeline:** A 2-stage system featuring a **Binary Detector** (Safe vs. Unsafe) and a **Malware Family Classifier**.
+*   **Zero-Loss Integrity:** Uses lossless padding to preserve 100% of binary data during image conversion.
+*   **Windows Native Benign Set:** Eliminates classification bias by using actual Windows system binaries as the benign class.
+*   **Professional Reporting:** Automated generation of Confusion Matrices and Classification Reports.
 
-```bash
-curl -L -o ~/ByteSight/dataset https://www.kaggle.com/api/v1/datasets/download/manmandes/malimg
-```
+## 📂 Project Structure
+*   **`bytesight_v2/`**: The core application, including training, modular models, and inference CLI.
+*   **`microsoft_dataset/`**: (Generated) Standardized image dataset organized for training.
+*   **`checkpoints/`**: (Generated) Model weights and evaluation reports.
 
-After this run
+## 📥 Model Weights
+Model weights (`.pth` files) are excluded from the repository to keep it lightweight. Please refer to the **GitHub Releases** section to download pre-trained weights for the hierarchical pipeline.
 
-```bash
-unzip dataset
-```
-
-The dataset doesn't contain benign images so it can't classify between benign and malware. It only classifies the classes of malware. To inject benign images run the command
-
-```bash
-python3 prepare_benign_dataset.py --input "/mnt/c/Windows/System32" --limit 600
-```
-
-This command will take 600 binary/executable files from the mentioned directory (System32 for me) and convert them to images and inject in the dataset folder as benign images for training the network.
-
-## How to run
-
-If you wish to run the pre-trained model before starting your own training run the command
-
-```python3
-python3 demo.py --temperature 2.0
-```
-
-Adjust the temperature flag to get softer confidence scores instead of a hard 100% which appears usually when the classification is correct.
+---
+For detailed setup and training instructions, please see the [ByteSight v2 README](bytesight_v2/README.md).

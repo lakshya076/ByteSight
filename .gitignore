@@ -218,5 +218,17 @@ __marimo__/
 .streamlit/secrets.toml
 
 # custom
-dataset
-malimg_dataset
+dataset/
+malimg_dataset/
+microsoft_dataset/
+train/
+test/
+*.7z
+trainLabels.csv
+testLabels.csv
+
+# ByteSight v2 Specifics
+bytesight_v2/checkpoints/
+*.pth
+explanation_*.png
+*.txt
