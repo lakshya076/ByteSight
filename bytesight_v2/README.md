@@ -32,8 +32,8 @@ Training automatically generates metrics saved to the `checkpoints/` folder:
 Run these from the **root** project directory to generate the image datasets:
 
 ```bash
-python bytesight_v2/process_microsoft_challenge.py --cores 12
-python bytesight_v2/prepare_benign_dataset_v2.py --limit 10868 --cores 12
+python3 bytesight_v2/process_microsoft_challenge.py --cores 12
+python3 bytesight_v2/prepare_benign_dataset_v2.py --limit 10868 --cores 12
 ```
 
 ### 2. Training the Pipeline
@@ -41,8 +41,8 @@ python bytesight_v2/prepare_benign_dataset_v2.py --limit 10868 --cores 12
 From the `bytesight_v2` folder, train both stages:
 
 ```bash
-python v2_main.py train --mode binary --epochs 15
-python v2_main.py train --mode malware_only --epochs 15
+python3 v2_main.py train --mode binary --epochs 15
+python3 v2_main.py train --mode malware_only --epochs 15
 ```
 
 ### 3. Inference & Demo
@@ -50,13 +50,13 @@ python v2_main.py train --mode malware_only --epochs 15
 Run a single binary / png through the full hierarchical pipeline:
 
 ```bash
-python v2_main.py predict --input path/to/sample.exe --gradcam
+python3 v2_main.py predict --input path/to/sample.exe --gradcam
 ```
 
 Or run a random demo on the test set:
 
 ```bash
-python v2_main.py demo --num_samples 20
+python3 v2_main.py demo --num_samples 20
 ```
 
 ---

@@ -53,9 +53,9 @@ def binary_to_tensor(file_path, img_size=224):
     ])
     return transform(img).unsqueeze(0), img
 
-def infer_pipeline(detector, classifier, family_classes, input_path, device, backbone):
+def infer_pipeline(detector, classifier, family_classes, input_path, device, backbone, temperature=1.0):
     """
-    Runs a file through the 2-stage hierarchical pipeline.
+    Runs a file through the 2-stage hierarchical pipeline with temperature scaling.
     Returns: (is_malware, predicted_class, confidence, original_pil)
     """
     if input_path.lower().endswith(('.png', '.jpg', '.jpeg')):
@@ -71,7 +71,7 @@ def infer_pipeline(detector, classifier, family_classes, input_path, device, bac
     # Stage 1
     with torch.no_grad():
         outputs = detector(input_tensor)
-        probs = torch.nn.functional.softmax(outputs, dim=1)
+        probs = torch.nn.functional.softmax(outputs / temperature, dim=1)
         conf, index = torch.max(probs, 1)
         
     is_malware = (index.item() == 1)
@@ -85,7 +85,7 @@ def infer_pipeline(detector, classifier, family_classes, input_path, device, bac
 
     with torch.no_grad():
         outputs = classifier(input_tensor)
-        probs = torch.nn.functional.softmax(outputs, dim=1)
+        probs = torch.nn.functional.softmax(outputs / temperature, dim=1)
         conf, index = torch.max(probs, 1)
         
     family = family_classes[index.item()]
@@ -140,6 +140,8 @@ def run_demo(args):
     # 3. Process and Print Table
     print(f"\n{'#'*85}")
     print(f"{'ByteSight v2 Hierarchical Demo':^85}")
+    if args.temperature != 1.0:
+        print(f"{f'Temperature: {args.temperature} (Calibration Active)':^85}")
     print(f"{'#'*85}\n")
     print(f"{'Original Class':<20} | {'Predicted Class':<20} | {'Conf':<10} | {'Result'}")
     print("-" * 85)
@@ -147,7 +149,7 @@ def run_demo(args):
     correct = 0
     for path in test_set:
         original_class = os.path.basename(os.path.dirname(path))
-        is_mw, predicted, conf, _, _ = infer_pipeline(detector, classifier, family_classes, path, device, args.backbone)
+        is_mw, predicted, conf, _, _ = infer_pipeline(detector, classifier, family_classes, path, device, args.backbone, temperature=args.temperature)
         
         # Result logic: In 2-stage, it's correct if the family matches OR if both are benign
         is_correct = (original_class == predicted)
@@ -265,7 +267,7 @@ def predict(args):
         classifier.to(device).eval()
 
     # 2. Run Pipeline
-    is_mw, predicted, conf, original_pil, input_tensor = infer_pipeline(detector, classifier, family_classes, args.input, device, args.backbone)
+    is_mw, predicted, conf, original_pil, input_tensor = infer_pipeline(detector, classifier, family_classes, args.input, device, args.backbone, temperature=args.temperature)
     
     print(f"\n{'='*40}")
     print(f"RESULT: {predicted}")
@@ -306,12 +308,14 @@ def main():
     predict_parser.add_argument("--checkpoint_dir", default="checkpoints")
     predict_parser.add_argument("--backbone", default="resnet18")
     predict_parser.add_argument("--gradcam", action="store_true")
+    predict_parser.add_argument("-t", "--temperature", type=float, default=1.0, help="Temperature for Softmax calibration")
 
     demo_parser = subparsers.add_parser("demo")
     demo_parser.add_argument("--num_samples", type=int, default=10)
     demo_parser.add_argument("--data_dir", default="../microsoft_dataset")
     demo_parser.add_argument("--checkpoint_dir", default="checkpoints")
     demo_parser.add_argument("--backbone", default="resnet18")
+    demo_parser.add_argument("-t", "--temperature", type=float, default=1.0, help="Temperature for Softmax calibration")
     
     args = parser.parse_args()
     if args.command == "train":
