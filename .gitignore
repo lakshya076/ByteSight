@@ -226,6 +226,10 @@ test/
 *.7z
 trainLabels.csv
 testLabels.csv
+dataset
+.vscode/
+train.7z:Zone.Identifier
+trainLabels.csv:Zone.Identifier
 
 # ByteSight v2 Specifics
 bytesight_v2/checkpoints/
