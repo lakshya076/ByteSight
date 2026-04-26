@@ -64,4 +64,4 @@ For detailed setup and training instructions using Microsoft Dataset, please see
 
 ## 📥 Model Weights
 
-Model weights (`.pth` files) are excluded from the repository to keep it lightweight. Please refer to the **GitHub Releases** section to download pre-trained weights for the hierarchical pipeline.
+Model weights (`.pth` files) are excluded from the repository to keep it lightweight. Please refer to the [**GitHub Releases**](https://github.com/lakshya076/ByteSight/releases/tag/v1.0) section to download pre-trained weights for the hierarchical pipeline.
