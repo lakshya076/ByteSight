@@ -13,6 +13,9 @@ from models.resnet_model import get_model
 from dataset import get_dataloaders
 from sklearn.metrics import confusion_matrix, classification_report, accuracy_score, ConfusionMatrixDisplay
 import matplotlib.pyplot as plt
+import warnings
+
+warnings.filterwarnings("ignore")
 
 # Import Grad-CAM
 try:
